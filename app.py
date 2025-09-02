@@ -14,7 +14,7 @@ tab1, tab2 = st.tabs(["Siatki", "Formatki"])
 
 # Karta Siatki
 with tab1:
-    st.header("Kalkulator dla Siatki")
+    st.header("Kalkulator dla owaty")
     speed_siatki = st.number_input("Prędkość maszyny (%) (Siatki)", min_value=0.0, value=64.0, step=0.1, key="speed_siatki")
     stretch = st.number_input("Rozciąg siatek (%)", min_value=0.0, value=162.0, step=0.1, key="stretch")
     grammage_siatki = st.number_input("Gramatura (g/m²) (Siatki)", min_value=0.0, value=120.0, step=0.1, key="grammage_siatki")
