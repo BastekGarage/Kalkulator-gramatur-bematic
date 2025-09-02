@@ -6,7 +6,7 @@ from datetime import datetime
 CONSTANT = 11697.80
 
 # Tytuł aplikacji
-st.title("Kalkulator Wydajności Maszyny")
+st.title("Kalkulator Gramatur")
 
 # Pola wejściowe
 speed = st.number_input("Prędkość maszyny (%)", min_value=0.0, value=64.0, step=0.1)
