@@ -15,14 +15,14 @@ def get_siatki_constant(grammage):
 st.title("Kalkulator Wydajności Maszyny")
 
 # Karty
-tab1, tab2 = st.tabs(["Siatki", "Formatki"])
+tab1, tab2 = st.tabs(["Owata", "Formatki"])
 
 # Karta Siatki
 with tab1:
-    st.header("Kalkulator dla Siatki")
-    speed_siatki = st.number_input("Prędkość maszyny (%) (Siatki)", min_value=0.0, value=64.0, step=0.1, key="speed_siatki")
+    st.header("Kalkulator dla Owaty")
+    speed_siatki = st.number_input("Prędkość maszyny (%) (Bematic)", min_value=0.0, value=64.0, step=0.1, key="speed_siatki")
     stretch = st.number_input("Rozciąg siatek (%)", min_value=0.0, value=162.0, step=0.1, key="stretch")
-    grammage_siatki = st.number_input("Gramatura (g/m²) (Siatki)", min_value=0.0, value=120.0, step=0.1, key="grammage_siatki")
+    grammage_siatki = st.number_input("Gramatura (g/m²) (Owata)", min_value=0.0, value=120.0, step=0.1, key="grammage_siatki")
 
     # Automatyczne ustawianie ilości ułożeń dla siatki
     if grammage_siatki >= 300:
@@ -32,9 +32,9 @@ with tab1:
     else:
         default_layers_siatki = 2.0
 
-    layers_siatki = st.number_input("Ilość ułożeń (Siatki)", min_value=0.0, value=default_layers_siatki, step=0.1, key="layers_siatki")
+    layers_siatki = st.number_input("Ilość ułożeń (Układacz)", min_value=0.0, value=default_layers_siatki, step=0.1, key="layers_siatki")
 
-    if st.button("Oblicz (Siatki)", key="calculate_siatki"):
+    if st.button("Oblicz", key="calculate_siatki"):
         if speed_siatki <= 0 or stretch <= 0 or grammage_siatki <= 0 or layers_siatki <= 0:
             st.error("Wpisz poprawne dane (większe od 0)!")
         elif speed_siatki > 100:
