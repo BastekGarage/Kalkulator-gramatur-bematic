@@ -12,7 +12,7 @@ def get_siatki_constant(grammage):
     return CONSTANT_SIATKI_200 if abs(grammage - 200) < 0.1 else CONSTANT_SIATKI_DEFAULT
 
 # Tytuł aplikacji
-st.title("Kalkulator Wydajności Maszyny")
+st.title("Kalkulator Gramatur Bematic")
 
 # Karty
 tab1, tab2 = st.tabs(["Owata", "Formatki"])
