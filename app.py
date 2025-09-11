@@ -23,7 +23,7 @@ with tab1:
     speed_owata = st.number_input("Prędkość maszyny (%) (Bematic)", min_value=0.0, value=64.0, step=0.1, key="speed_owata")
     stretch = st.number_input("Rozciąg siatek (%)", min_value=0.0, value=162.0, step=0.1, key="stretch")
     grammage_owata = st.number_input("Gramatura (g/m²) (Owata)", min_value=0.0, value=120.0, step=0.1, key="grammage_owata")
-    width_owata = st.selectbox("Szerokość (cm)", [240, 320], index=0, key="width_owata")
+    width_owata = st.selectbox("Szerokość (cm)", [240, 320, 360], index=0, key="width_owata")
 
     # Automatyczne ustawianie ilości ułożeń dla Owaty
     if grammage_owata >= 300:
@@ -44,9 +44,11 @@ with tab1:
             effective_grammage = grammage_owata / layers_owata
             constant = get_owata_constant(grammage_owata)
             result = (speed_owata / 100) * (stretch / 100) * (effective_grammage / 1000) * constant
-            # Dodaj 10 kg/h dla szerokości 320 cm
+            # Dodaj 10 kg/h dla szerokości 320 cm, 15 kg/h dla 360 cm
             if width_owata == 320:
                 result += 10.0
+            elif width_owata == 360:
+                result += 15.0
             st.success(f"Wydajność: {result:.1f} kg/h")
             
             if 'results_owata' not in st.session_state:
@@ -120,4 +122,4 @@ with tab2:
                 mime="text/csv",
                 key="download_formatki"
             )
-            st.success(f"Plik {filename} gotowy do pobrania!") 
+            st.success(f"Plik {filename} gotowy do pobrania!")
