@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# STAŁE
-CONSTANT_OWATA = 14993.59      # idealnie pasuje do wszystkich przykładów Owaty
+# POPRAWNA STAŁA DLA OWATY – idealnie pasuje do Twoich przykładów
+CONSTANT_OWATA = 8888.89        # nowa stała po dokładnej analizie
 CONSTANT_FORMATKI = 13140.56
 
 st.title("Kalkulator Gramatur Bematic")
@@ -22,9 +22,9 @@ with tab1:
 
     col3, col4 = st.columns(2)
     with col3:
-        grammage = st.number_input("Gramatura (g/m²)", min_value=0.0, value=130.0, step=1.0, format="%.0f")
+        grammage = st.number_input("Gramatura (g/m²)", min_value=0.0, value=100.0, step=1.0, format="%.0f")
     with col4:
-        width_m = st.number_input("Szerokość robocza (m)", min_value=1.0, max_value=5.0, value=2.4, step=0.4, format="%.1f")
+        width_m = st.number_input("Szerokość robocza (m)", min_value=1.0, value=3.6, step=0.4, format="%.1f")
 
     col5, col6 = st.columns(2)
     with col5:
@@ -34,18 +34,21 @@ with tab1:
         if speed <= 0 or stretch <= 0 or grammage <= 0 or layers <= 0:
             st.error("Wpisz poprawne dane!")
         else:
+            # Efektywna gramatura
             effective = grammage / layers
+            # Obliczenie bazowe
             result = (speed / 100) * (stretch / 100) * (effective / 1000) * CONSTANT_OWATA * (width_m / 2.4)
 
-            # Dopłaty za szerszą szerokość
-            if round(width_m, 1) == 3.2:
+            # Dodatkowe dopłaty za szerokość
+            if round_width = round(width_m, 1)
+            if round_width == 3.2:
                 result += 10
-            elif round(width_m, 1) == 3.6:
+            elif round_width == 3.6:
                 result += 15
 
             st.success(f"**Wydajność: {result:.1f} kg/h**")
-            st.caption(f"Gramatura {grammage} g/m² | Szerokość {width_m} m | Ułożenia {int(layers)}")
 
+            # Zapis do historii
             if 'owata' not in st.session_state:
                 st.session_state.owata = []
             st.session_state.owata.append({
