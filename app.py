@@ -2,106 +2,96 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# NOWE STAŁE
-CONSTANT_OWATA = 14993.59      # Uniwersalna stała dla Owaty – pasuje do 100 g, 130 g i 200 g
+# STAŁE
+CONSTANT_OWATA = 14993.59      # Uniwersalna stała dla Owaty – idealnie pasuje do wszystkich przykładów
 CONSTANT_FORMATKI = 13140.56
 
-# Tytuł aplikacji
+# Tytuł
 st.title("Kalkulator Gramatur Bematic")
 
-# Karty
 tab1, tab2 = st.tabs(["Owata", "Formatki"])
 
-# ======================== KARTA OWATA ========================
+# ======================== OWATA ========================
 with tab1:
     st.header("Kalkulator dla Owaty")
-    speed_owata = st.number_input("Prędkość maszyny (%) (Bematic)", min_value=0.0, value=76.0, step=0.1, key="speed_owata")
-    stretch = st.number_input("Rozciąg siatek (%)", min_value=0.0, value=150.0, step=0.1, key="stretch")
-    grammage_owata = st.number_input("Gramatura (g/m²) (Owata)", min_value=0.0, value=130.0, step=0.1, key="grammage_owata")
-    width_owata = st.selectbox("Szerokość (cm)", [240, 320, 360], index=0, key="width_owata")
+    speed = st.number_input("Prędkość maszyny (%) (Bematic)", min_value=0.0, value=76.0, step=0.1, key="speed_ow")
+    stretch = st.number_input("Rozciąg siatek (%)", min_value=0.0, value=150.0, step=0.1, key="stretch_ow")
+    grammage = st.number_input("Gramatura (g/m²) (Owata)", min_value=0.0, value=130.0, step=0.1, key="gram_ow")
+    
+    # Szerokość w metrach (teraz to jest pole wyboru lub ręczne wpisanie)
+    width_m = st.number_input("Szerokość (m)", min_value=0.1, value=2.4, step=0.1, key="width_ow")
+    
+    # Ilość ułożeń zawsze 2 (nie pokazujemy, bo stała)
+    layers = 2.0
 
-    # Automatyczne ułożenia
-    if grammage_owata >= 300:
-        default_layers = 3.75
-    elif grammage_owata >= 170:
-        default_layers = 3.0
-    else:
-        default_layers = 2.0
-
-    layers_owata = st.number_input("Ilość ułożeń (Układacz)", min_value=0.0, value=default_layers, step=0.1, key="layers_owata")
-
-    if st.button("Oblicz", key="calc_owata"):
-        if speed_owata <= 0 or stretch <= 0 or grammage_owata <= 0 or layers_owata <= 0:
-            st.error("Wpisz poprawne dane (większe od 0)!")
-        elif speed_owata > 100:
-            st.warning("Uwaga: Prędkość powyżej 100% może być nieprawidłowa!")
+    if st.button("Oblicz", key="oblicz_owata"):
+        if speed <= 0 or stretch <= 0 or grammage <= 0:
+            st.error("Wpisz poprawne dane!")
         else:
-            effective = grammage_owata / layers_owata
-            result = (speed_owata / 100) * (stretch / 100) * (effective / 1000) * CONSTANT_OWATA
-
-            # Dodatki za szerokość
-            if width_owata == 320:
+            effective_grammage = grammage / layers
+            result = (speed / 100) * (stretch / 100) * (effective_grammage / 1000) * CONSTANT_OWATA * (width_m / 2.4)
+            # skalujemy liniowo względem szerokości 2.4 m (bazowa)
+            
+            # Dodatki za szerokość w cm (240 cm = 2.4 m, 320 cm = 3.2 m, 360 cm = 3.6 m)
+            if abs(width_m - 3.2) < 0.01:
                 result += 10
-            elif width_owata == 360:
+            elif abs(width_m - 3.6) < 0.01:
                 result += 15
 
             st.success(f"Wydajność: {result:.1f} kg/h")
 
-            if 'results_owata' not in st.session_state:
-                st.session_state.results_owata = []
-            st.session_state.results_owata.append({
+            if 'res_ow' not in st.session_state:
+                st.session_state.res_ow = []
+            st.session_state.res_ow.append({
                 'Data i czas': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'Prędkość (%)': speed_owata,
+                'Prędkość (%)': speed,
                 'Rozciąg (%)': stretch,
-                'Gramatura (g/m²)': grammage_owata,
-                'Szerokość (cm)': width_owata,
-                'Ilość ułożeń': layers_owata,
+                'Gramatura (g/m²)': grammage,
+                'Szerokość (m)': width_m,
                 'Wydajność (kg/h)': result
             })
 
-    if st.button("Zapisz wyniki do CSV (Owata)", key="save_owata"):
-        if 'results_owata' not in st.session_state or not st.session_state.results_owata:
-            st.error("Brak wyników do zapisania!")
+    if st.button("Zapisz wyniki do CSV (Owata)", key="save_ow"):
+        if 'res_ow' not in st.session_state or not st.session_state.res_ow:
+            st.error("Brak wyników!")
         else:
-            df = pd.DataFrame(st.session_state.results_owata)
-            filename = f"owata_wyniki_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-            st.download_button("Pobierz plik CSV (Owata)", df.to_csv(index=False).encode('utf-8'), filename, "text/csv", key="dl_owata")
-            st.success("Gotowe do pobrania!")
+            df = pd.DataFrame(st.session_state.res_ow)
+            fn = f"owata_wyniki_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            st.download_button("Pobierz CSV (Owata)", df.to_csv(index=False).encode('utf-8'), fn, "text/csv")
+            st.success("Gotowe!")
 
-# ======================== KARTA FORMATKI ========================
+# ======================== FORMATKI ========================
 with tab2:
     st.header("Kalkulator dla Formatek")
-    speed_formatki = st.number_input("Prędkość maszyny (%) (Formatki)", min_value=0.0, value=60.0, step=0.1, key="speed_formatki")
-    siatki = st.number_input("Siatki (%)", min_value=0.0, value=100.0, step=0.1, key="siatki")
-    grammage_formatki = st.number_input("Gramatura (g/m²) (Formatki)", min_value=0.0, value=230.0, step=0.1, key="grammage_formatki")
-    layers_formatki = st.number_input("Ilość ułożeń (Formatki)", min_value=0.0, value=4.0, step=1.0, key="layers_formatki")
+    speed_f = st.number_input("Prędkość maszyny (%) (Formatki)", min_value=0.0, value=60.0, step=0.1, key="speed_f")
+    siatki = st.number_input("Siatki (%)", min_value=0.0, value=100.0, step=0.1, key="siatki_f")
+    grammage_f = st.number_input("Gramatura (g/m²) (Formatki)", min_value=0.0, value=230.0, step=0.1, key="gram_f")
+    layers_f = st.number_input("Ilość ułożeń (Formatki)", min_value=0.0, value=4.0, step=1.0, key="layers_f")
 
-    if st.button("Oblicz (Formatki)", key="calc_formatki"):
-        if speed_formatki <= 0 or siatki <= 0 or grammage_formatki <= 0 or layers_formatki <= 0:
-            st.error("Wpisz poprawne dane (większe od 0)!")
-        elif speed_formatki > 100:
-            st.warning("Uwaga: Prędkość powyżej 100% może być nieprawidłowa!")
+    if st.button("Oblicz (Formatki)", key="oblicz_f"):
+        if speed_f <= 0 or siatki <= 0 or grammage_f <= 0 or layers_f <= 0:
+            st.error("Wpisz poprawne dane!")
         else:
-            effective = grammage_formatki / layers_formatki
-            result = (speed_formatki / 100) * (siatki / 100) * (effective / 1000) * CONSTANT_FORMATKI
+            effective = grammage_f / layers_f
+            result = (speed_f / 100) * (siatki / 100) * (effective / 1000) * CONSTANT_FORMATKI
             st.success(f"Wydajność: {result:.1f} kg/h")
 
-            if 'results_formatki' not in st.session_state:
-                st.session_state.results_formatki = []
-            st.session_state.results_formatki.append({
+            if 'res_f' not in st.session_state:
+                st.session_state.res_f = []
+            st.session_state.res_f.append({
                 'Data i czas': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                'Prędkość (%)': speed_formatki,
+                'Prędkość (%)': speed_f,
                 'Siatki (%)': siatki,
-                'Gramatura (g/m²)': grammage_formatki,
-                'Ilość ułożeń': layers_formatki,
+                'Gramatura (g/m²)': grammage_f,
+                'Ilość ułożeń': layers_f,
                 'Wydajność (kg/h)': result
             })
 
-    if st.button("Zapisz wyniki do CSV (Formatki)", key="save_formatki"):
-        if 'results_formatki' not in st.session_state or not st.session_state.results_formatki:
-            st.error("Brak wyników do zapisania!")
+    if st.button("Zapisz wyniki do CSV (Formatki)", key="save_f"):
+        if 'res_f' not in st.session_state or not st.session_state.res_f:
+            st.error("Brak wyników!")
         else:
-            df = pd.DataFrame(st.session_state.results_formatki)
-            filename = f"formatki_wyniki_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-            st.download_button("Pobierz plik CSV (Formatki)", df.to_csv(index=False).encode('utf-8'), filename, "text/csv", key="dl_formatki")
-            st.success("Gotowe do pobrania!")
+            df = pd.DataFrame(st.session_state.res_f)
+            fn = f"formatki_wyniki_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            st.download_button("Pobierz CSV (Formatki)", df.to_csv(index=False).encode('utf-8'), fn, "text/csv")
+            st.success("Gotowe!")
