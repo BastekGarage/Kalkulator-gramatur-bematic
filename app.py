@@ -72,4 +72,6 @@ with tab2:
     grammage_f = st.number_input("Gramatura (g/m²) (Formatki)", value=230.0, step=1.0, key="gf")
     layers_f = st.number_input("Ilość ułożeń (Formatki)", value=4.0, step=1.0, key="lf")
 
-    if st.button("OBLICZ
+    if st.button("OBLICZ – FORMATKI", use_container_width=True, type="primary"):
+        result = (speed_f / 100) * (siatki / 100) * (grammage_f / layers_f / 1000) * CONSTANT_FORMATKI
+        st.success(f"**Wydajność: {result:.1f} kg/h**")
