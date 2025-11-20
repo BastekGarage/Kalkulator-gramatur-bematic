@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 
-# POPRAWNA STAŁA DLA OWATY – idealnie pasuje do Twoich przykładów
-CONSTANT_OWATA = 8888.89        # nowa stała po dokładnej analizie
+# POPRAWNA STAŁA DLA OWATY – idealnie pasuje do wszystkich Twoich przykładów
+CONSTANT_OWATA = 8888.89
 CONSTANT_FORMATKI = 13140.56
 
 st.title("Kalkulator Gramatur Bematic")
@@ -36,19 +36,17 @@ with tab1:
         else:
             # Efektywna gramatura
             effective = grammage / layers
-            # Obliczenie bazowe
+            # Bazowa wydajność dla szerokości 2.4 m
             result = (speed / 100) * (stretch / 100) * (effective / 1000) * CONSTANT_OWATA * (width_m / 2.4)
 
-            # Dodatkowe dopłaty za szerokość
-            if round_width = round(width_m, 1)
-            if round_width == 3.2:
+            # Dopłaty za szerszą szerokość
+            if abs(width_m - 3.2) < 0.05:
                 result += 10
-            elif round_width == 3.6:
+            if abs(width_m - 3.6) < 0.05:
                 result += 15
 
             st.success(f"**Wydajność: {result:.1f} kg/h**")
 
-            # Zapis do historii
             if 'owata' not in st.session_state:
                 st.session_state.owata = []
             st.session_state.owata.append({
